@@ -1,24 +1,43 @@
-# 📦 Poetry to Conda Migration Guide
+# 🐍 Backend Setup Guide
 
-> Step-by-step guide to migrating your Python project from Poetry to Conda
+> Python Flask API with Gemini AI and CDP AgentKit for onchain operations
 
 ---
 
-## 🚀 Migration Steps
+## 📋 Prerequisites
 
-### 1️⃣ Install Conda (if not already installed)
+- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/products/distribution)
+- [Rust](https://www.rust-lang.org/tools/install)
+- Python 3.8+
 
-Download and install **Miniconda** or **Anaconda** from:
+---
 
-- **Miniconda**: [https://docs.conda.io/en/latest/miniconda.html](https://docs.conda.io/en/latest/miniconda.html)
-- **Anaconda**: [https://www.anaconda.com/products/distribution](https://www.anaconda.com/products/distribution)
+## ⚙️ Environment Variables
 
-### 2️⃣ Create the Conda Environment
+Create a `.env` file in the backend directory:
 
 ```bash
-# Navigate to your backend directory
-cd backend
+CDP_API_KEY_NAME=         # Get from https://portal.cdp.coinbase.com/projects/api-keys
+CDP_API_KEY_PRIVATE_KEY="" # Get from https://portal.cdp.coinbase.com/projects/api-keys
+GOOGLE_API_KEY=           # Get from https://ai.google.dev/
+NETWORK_ID=base-sepolia
 
+# Optional wallet settings:
+CDP_WALLET_ID=""
+CDP_WALLET_SEED=""
+```
+
+---
+
+## 🚀 Installation & Setup
+
+### 1️⃣ Navigate to Backend Directory
+```bash
+cd backend
+```
+
+### 2️⃣ Create Conda Environment
+```bash
 # Create the environment from the YAML file
 conda env create -f environment.yml
 
@@ -26,119 +45,118 @@ conda env create -f environment.yml
 conda activate agent-backend
 ```
 
-### 3️⃣ Remove Poetry Files
-
+### 3️⃣ Start the Server
 ```bash
-# Remove Poetry configuration files
-rm pyproject.toml
-rm poetry.lock
+python index.py
 ```
 
-### 4️⃣ Update Your Workflow
+The server will start on `http://localhost:5000`
 
-#### Development Setup
+---
+
+## 🔧 Development Commands
+
+### Environment Management
 ```bash
 # Activate environment
 conda activate agent-backend
 
-# Run your application
-python index.py
-```
+# Deactivate environment
+conda deactivate
 
-#### Adding New Dependencies
-
-**Method 1**: Add to `environment.yml` and update environment
-```bash
+# Update environment
 conda env update -f environment.yml
 ```
 
-**Method 2**: Install directly and then export
+### Adding Dependencies
 ```bash
+# Install new package
 conda install package_name
-# or
+
+# Or use pip within the conda environment
 pip install package_name
 
-# Export current environment (optional)
+# Export updated environment
 conda env export > environment.yml
 ```
 
-#### Sharing Environment
+---
+
+## 📡 API Endpoints
+
+### Chat Endpoint
 ```bash
-# Others can recreate your environment with:
+curl -X POST http://localhost:5000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"input": "deploy a new ERC-20 token", "conversation_id": 0}'
+```
+
+### Get Deployed Assets
+```bash
+# Get deployed NFTs
+curl http://localhost:5000/nfts
+
+# Get deployed ERC-20 tokens
+curl http://localhost:5000/tokens
+```
+
+---
+
+## 💰 Wallet Management
+
+⚠️ **Important**: When running your agent for the first time, the SDK will automatically generate a wallet. The wallet information will be logged to the console and saved to the SQLite database.
+
+For production use, save your wallet information securely using the environment variables:
+```bash
+CDP_WALLET_ID="your-wallet-id"
+CDP_WALLET_SEED="your-wallet-seed"
+```
+
+---
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Rust Installation Error**
+```bash
+# Make sure Rust is installed
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+```
+
+**Environment Creation Failed**
+```bash
+# Remove existing environment and recreate
+conda env remove -n agent-backend
 conda env create -f environment.yml
 ```
 
-### 5️⃣ Update Documentation
-
-Update your `README.md` and `CONTRIBUTING.md` files to reflect the new conda setup instead of poetry commands.
-
-### 6️⃣ Verify Installation
-
+**Package Installation Issues**
 ```bash
-# Check if all packages are installed correctly
-conda list
+# Clear conda cache
+conda clean --all
 
-# Test your application
-python index.py
+# Update conda
+conda update conda
 ```
 
 ---
 
-## 🔧 Common Conda Commands
+## 📊 Project Structure
 
-| Action | Command |
-|--------|---------|
-| **List environments** | `conda env list` |
-| **Remove environment** | `conda env remove -n agent-backend` |
-| **Update all packages** | `conda update --all` |
-| **Deactivate environment** | `conda deactivate` |
-| **Activate environment** | `conda activate agent-backend` |
-| **Export environment** | `conda env export > environment.yml` |
-| **Install package** | `conda install package_name` |
-| **Search for package** | `conda search package_name` |
-
----
-
-## 📋 Quick Reference
-
-### Before (Poetry)
-```bash
-# Install dependencies
-poetry install
-
-# Run application
-poetry run python index.py
-
-# Add dependency
-poetry add package_name
 ```
-
-### After (Conda)
-```bash
-# Create environment
-conda env create -f environment.yml
-
-# Activate and run
-conda activate agent-backend
-python index.py
-
-# Add dependency
-conda install package_name
+backend/
+├── agent/                 # Agent modules
+│   ├── __init__.py
+│   ├── custom_actions.py  # Custom agent actions
+│   └── ...
+├── environment.yml        # Conda environment file
+├── index.py              # Flask application entry point
+├── .env                  # Environment variables
+└── README.md             # This file
 ```
 
 ---
 
-## ✅ Migration Checklist
-
-- [ ] Install Conda (Miniconda/Anaconda)
-- [ ] Create environment from `environment.yml`
-- [ ] Test environment activation
-- [ ] Remove Poetry files (`pyproject.toml`, `poetry.lock`)
-- [ ] Update documentation
-- [ ] Verify application runs correctly
-- [ ] Update CI/CD scripts (if any)
-- [ ] Share new setup with team members
-
----
-
-**Migration Complete! 🎉**
+**Backend Setup Complete! 🎉**
