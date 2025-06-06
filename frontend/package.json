@@ -1,0 +1,35 @@
+{
+  "name": "agent-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "next-dev": "next dev",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "lint:unsafe": "biome lint --write --unsafe .",
+    "ci:check": "biome ci --formatter-enabled=false --linter-enabled=false",
+    "ci:format": "biome ci --linter-enabled=false --organize-imports-enabled=false",
+    "ci:lint": "biome ci --formatter-enabled=false --organize-imports-enabled=false"
+  },
+  "dependencies": {
+    "@coinbase/onchainkit": "0.35.5",
+    "concurrently": "^8.0.1",
+    "next": "14.2.15",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.15",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
